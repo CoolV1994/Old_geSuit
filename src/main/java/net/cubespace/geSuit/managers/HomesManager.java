@@ -1,5 +1,6 @@
 package net.cubespace.geSuit.managers;
 
+import net.cubespace.geSuit.Utilities;
 import net.cubespace.geSuit.geSuit;
 import net.cubespace.geSuit.objects.GSPlayer;
 import net.cubespace.geSuit.objects.Home;
@@ -94,7 +95,7 @@ public class HomesManager {
     }
     
     public static void listOtherPlayersHomes(GSPlayer sender, String playername) {
-    	GSPlayer player = DatabaseManager.players.loadPlayer(playername);
+    	GSPlayer player = DatabaseManager.players.loadPlayer(Utilities.getUUID(playername));
     	
     	if (player == null) {
             PlayerManager.sendMessageToTarget(sender, ConfigManager.messages.PLAYER_DOES_NOT_EXIST.replace("{player}", playername));
@@ -186,7 +187,7 @@ public class HomesManager {
     }
     
     public static void sendPlayerToOtherHome(GSPlayer sender, String playername, String home) {
-    	GSPlayer player = DatabaseManager.players.loadPlayer(playername);
+    	GSPlayer player = DatabaseManager.players.loadPlayer(Utilities.getUUID(playername));
     	
     	if (player == null) {
             PlayerManager.sendMessageToTarget(sender, ConfigManager.messages.PLAYER_DOES_NOT_EXIST);

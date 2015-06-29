@@ -6,16 +6,19 @@ import net.cubespace.geSuit.geSuit;
 import net.cubespace.geSuit.objects.Ban;
 import net.cubespace.geSuit.objects.GSPlayer;
 import net.cubespace.geSuit.objects.Track;
+import net.cubespace.geSuit.profile.Profile;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,8 +30,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
-
-import au.com.addstar.bc.BungeeChat;
 
 public class PlayerManager {
     private static SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss z");
@@ -42,8 +43,20 @@ public class PlayerManager {
                 || DatabaseManager.players.playerExists(player.getUUID());
     }
     
-    public static boolean playerExists(UUID player) {
-        return DatabaseManager.players.playerExists(player.toString().replace("-", ""));
+    public static boolean playerExists(UUID uuid) {
+        return playerExists(uuid.toString().replaceAll("-", ""));
+    }
+
+    public static boolean playerExists(String uuid) {
+        return DatabaseManager.players.playerExists(uuid);
+    }
+
+    public static boolean playerUserNameExists(String player) {
+        return DatabaseManager.players.playerNameExists(player);
+    }
+
+    public static boolean playerNicknameExists(String nickname) {
+        return DatabaseManager.players.nickNameExists(nickname);
     }
 
     public static void initPlayer(final PendingConnection connection, final LoginEvent event) {
@@ -96,7 +109,7 @@ public class PlayerManager {
                         LoggingManager.log(ConfigManager.messages.PLAYER_LOAD_CACHED.replace("{player}", gsPlayer.getName()).replace("{uuid}", connection.getUniqueId().toString()));
                     }
                 } else {
-                    gsPlayer = new GSPlayer(connection.getName(), connection.getUUID(), true);
+                    gsPlayer = new GSPlayer(connection.getUUID(), connection.getName());
                     gsPlayer.setFirstJoin(true);
                 }
                 
@@ -218,19 +231,11 @@ public class PlayerManager {
         
         if (p == null) {
             // Player is offline, load data
-            p = DatabaseManager.players.loadPlayer(player);
+            p = DatabaseManager.players.loadPlayer(Utilities.getUUID(player));
         }
         
         if (p == null) { // Unknown player
             return ConfigManager.messages.PLAYER_DOES_NOT_EXIST;
-        }
-        
-        // Vanished and not online
-        if (ConfigManager.main.BungeeChatIntegration) {
-	        if (BungeeChat.instance.getSyncManager().getPropertyBoolean(p.getProxiedPlayer(), "VNP:vanished", false) 
-	                && !BungeeChat.instance.getSyncManager().getPropertyBoolean(p.getProxiedPlayer(), "VNP:online", true)) {
-	            online = false;
-	        }
         }
         
         // Do a ban check
@@ -396,4 +401,168 @@ public class PlayerManager {
     	DatabaseManager.tracking.insertTracking(player.getName(), player.getUuid(), player.getIp());
     }
 
+    public static void sendPrivateMessageToPlayer( GSPlayer from, String receiver, String message ) {
+        GSPlayer rec = matchOnlinePlayer(receiver);
+        if ( from.isMuted() && ConfigManager.chat.mutePrivateMessages ) {
+            from.sendMessage(ConfigManager.messages.MUTED );
+            return;
+        }
+        if ( rec == null ) {
+            from.sendMessage( ConfigManager.messages.PLAYER_NOT_ONLINE );
+            return;
+        }
+
+        if ( rec.isIgnoring( from.getName() ) ) {
+            from.sendMessage( ConfigManager.messages.PLAYER_IGNORING.replace( "{player}", rec.getName() ) );
+            return;
+        }
+        from.sendMessage( ConfigManager.messages.PRIVATE_MESSAGE_OTHER_PLAYER.replace( "{player}", rec.getName() ).replace( "{message}", message ) );
+        rec.sendMessage( ConfigManager.messages.PRIVATE_MESSAGE_RECEIVE.replace( "{player}", from.getName() ).replace( "{message}", message ) );
+        rec.setReplyPlayer( from.getName() );
+        sendPrivateMessageToSpies( from, rec, message );
+    }
+
+    public static void setPlayerAFK( String player, boolean sendGlobal, boolean hasDisplayPerm ) {
+        GSPlayer p = getPlayer( player );
+        if ( !p.isAFK() ) {
+            p.setAFK( true );
+            if ( sendGlobal ) {
+                sendBroadcast( ConfigManager.messages.PLAYER_AFK.replace( "{player}", p.getDisplayingName() ) );
+            } else {
+                sendServerMessage( geSuit.proxy.getServerInfo(p.getServer()), ConfigManager.messages.PLAYER_AFK.replace( "{player}", p.getDisplayingName() ) );
+            }
+            if ( hasDisplayPerm ) {
+                p.setTempName( ConfigManager.messages.AFK_DISPLAY + p.getDisplayingName() );
+            }
+        } else {
+            p.setAFK( false );
+            if ( hasDisplayPerm ) {
+                p.revertName();
+            }
+            if ( sendGlobal ) {
+                sendBroadcast( ConfigManager.messages.PLAYER_NOT_AFK.replace( "{player}", p.getDisplayingName() ) );
+            } else {
+                sendServerMessage( geSuit.proxy.getServerInfo(p.getServer()), ConfigManager.messages.PLAYER_NOT_AFK.replace( "{player}", p.getDisplayingName() ) );
+            }
+        }
+    }
+
+    private static void sendServerMessage( ServerInfo server, String message ) {
+        for ( ProxiedPlayer p : server.getPlayers() ) {
+            for ( String line : message.split( "\n" ) ) {
+                p.sendMessage( line );
+            }
+        }
+    }
+
+    public static ArrayList<GSPlayer> getChatSpies() {
+        ArrayList<GSPlayer> spies = new ArrayList<>();
+        for ( GSPlayer p : onlinePlayers.values() ) {
+            if ( p.isChatSpying() ) {
+                spies.add( p );
+            }
+        }
+        return spies;
+    }
+
+    public static void sendPrivateMessageToSpies( GSPlayer sender, GSPlayer receiver, String message ) {
+        for ( GSPlayer p : getChatSpies() ) {
+            if ( !( p.equals( sender ) || p.equals( receiver ) ) ) {
+                p.sendMessage( ConfigManager.messages.PRIVATE_MESSAGE_SPY.replace( "{sender}", sender.getName() ).replace( "{player}", receiver.getName() ).replace( "{message}", message ) );
+            }
+        }
+    }
+
+    public static void sendMessageToSpies( ServerInfo server, String message ) {
+        for ( GSPlayer p : getChatSpies() ) {
+            if ( !p.getServer().equals( server.getName() ) ) {
+                p.sendMessage( message );
+            }
+        }
+    }
+
+    public static void setPlayerChatSpy( GSPlayer p ) throws SQLException {
+        if ( p.isChatSpying() ) {
+            p.setChatSpying( false );
+            p.sendMessage( ConfigManager.messages.CHATSPY_DISABLED );
+        } else {
+            p.setChatSpying( true );
+            p.sendMessage( ConfigManager.messages.CHATSPY_ENABLED );
+        }
+        DatabaseManager.players.setPlayerChatSpy(p.getUuid(), p.isChatSpying());
+    }
+
+    public static boolean nickNameExists( String nick ) {
+        return DatabaseManager.players.nickNameExists(nick);
+    }
+
+    public static void setPlayersNickname( String p, String nick ) throws SQLException {
+        String uuid;
+        if ( isPlayerOnline( p ) ) {
+            GSPlayer player = getPlayer(p);
+            player.setNickname(nick);
+            player.updateDisplayName();
+            player.updatePlayer();
+            uuid = player.getUuid();
+        } else {
+            uuid = Utilities.getUUID( p );
+        }
+        if (uuid != null) {
+            DatabaseManager.players.setPlayerNickname(uuid, nick);
+        }
+    }
+
+    public static boolean isPlayerMuted( String target ) {
+        GSPlayer player = matchOnlinePlayer(target);
+        if ( player != null ) {
+            return player.isMuted();
+        } else {
+            return DatabaseManager.players.isPlayerMuted(player.getUuid());
+        }
+
+    }
+
+    public static void mutePlayer( String target ) throws SQLException {
+        GSPlayer p = matchOnlinePlayer(target );
+        boolean isMuted = isPlayerMuted( target );
+        if ( p != null ) {
+            if ( isMuted ) {
+                p.setMute( false );
+                p.sendMessage( ConfigManager.messages.UNMUTED );
+            } else {
+                p.setMute( true );
+                p.sendMessage( ConfigManager.messages.MUTED );
+            }
+        }
+        DatabaseManager.players.mutePlayer(p.getUuid(), isMuted);
+    }
+
+    public static void tempMutePlayer( final GSPlayer t, int minutes ) throws SQLException {
+        mutePlayer( t.getName() );
+        geSuit.proxy.getScheduler().schedule( geSuit.instance, new Runnable() {
+            @Override
+            public void run() {
+                if ( t.isMuted() ) {
+                    try {
+                        mutePlayer( t.getName() );
+                    } catch ( SQLException e ) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        }, minutes, TimeUnit.MINUTES );
+    }
+
+    public static boolean playerUsingNickname( String string ) {
+        return DatabaseManager.players.playerUsingNickname(string) != null;
+    }
+
+    public static void removeNickname( String target ) throws SQLException {
+        setPlayersNickname( target, null );
+    }
+
+    public static boolean isPlayerOnline( String player ) {
+        return onlinePlayers.containsKey( player );
+    }
 }

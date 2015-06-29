@@ -13,22 +13,8 @@ import net.cubespace.geSuit.commands.WarnCommand;
 import net.cubespace.geSuit.commands.WarnHistoryCommand;
 import net.cubespace.geSuit.commands.WhereCommand;
 import net.cubespace.geSuit.database.ConnectionHandler;
-import net.cubespace.geSuit.database.convert.Converter;
-import net.cubespace.geSuit.listeners.APIMessageListener;
-import net.cubespace.geSuit.listeners.BansMessageListener;
-import net.cubespace.geSuit.listeners.BungeeChatListener;
-import net.cubespace.geSuit.listeners.HomesMessageListener;
-import net.cubespace.geSuit.listeners.PlayerListener;
-import net.cubespace.geSuit.listeners.PortalsMessageListener;
-import net.cubespace.geSuit.listeners.SpawnListener;
-import net.cubespace.geSuit.listeners.SpawnMessageListener;
-import net.cubespace.geSuit.listeners.TeleportsListener;
-import net.cubespace.geSuit.listeners.TeleportsMessageListener;
-import net.cubespace.geSuit.listeners.WarpsMessageListener;
-import net.cubespace.geSuit.managers.ConfigManager;
-import net.cubespace.geSuit.managers.DatabaseManager;
-import net.cubespace.geSuit.managers.GeoIPManager;
-import net.cubespace.geSuit.managers.LoggingManager;
+import net.cubespace.geSuit.listeners.*;
+import net.cubespace.geSuit.managers.*;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -50,14 +36,11 @@ public class geSuit extends Plugin
         ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
         connectionHandler.release();
 
-        if (ConfigManager.main.ConvertFromBungeeSuite) {
-            Converter converter = new Converter();
-            converter.convert();
-        }
-
         registerListeners();
         registerCommands();
         GeoIPManager.initialize();
+        ChatManager.defaultPrefixes();
+        ChatManager.loadChannels();
     }
 
     private void registerCommands()
@@ -91,6 +74,7 @@ public class geSuit extends Plugin
         getProxy().registerChannel("geSuitPortals");        // Portals out/in
         getProxy().registerChannel("geSuitWarps");          // Warps in
         getProxy().registerChannel("geSuitHomes");          // Homes in
+        getProxy().registerChannel("geSuitChat");           // Chat out/in
         getProxy().registerChannel("geSuitAPI");            // API messages in
 
         proxy.getPluginManager().registerListener(this, new PlayerListener());
@@ -102,10 +86,9 @@ public class geSuit extends Plugin
         proxy.getPluginManager().registerListener(this, new PortalsMessageListener());
         proxy.getPluginManager().registerListener(this, new SpawnListener());
         proxy.getPluginManager().registerListener(this, new SpawnMessageListener());
+        proxy.getPluginManager().registerListener(this, new ChatListener());
+        proxy.getPluginManager().registerListener(this, new ChatMessageListener());
         proxy.getPluginManager().registerListener(this, new APIMessageListener());
-        if (ConfigManager.main.BungeeChatIntegration) {
-            proxy.getPluginManager().registerListener(this, new BungeeChatListener());
-        }
     }
 
     public void onDisable()

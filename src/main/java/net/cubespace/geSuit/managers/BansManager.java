@@ -120,7 +120,7 @@ public class BansManager {
             ip = target;
         } else {
         	// Target is a player name or uuid.. grab the player details and record it all
-            GSPlayer gs = DatabaseManager.players.loadPlayer(target);
+            GSPlayer gs = DatabaseManager.players.loadPlayer(Utilities.getUUID(target));
             if (gs != null) {
 	            ip = gs.getIp();
 	            uuid = gs.getUuid();

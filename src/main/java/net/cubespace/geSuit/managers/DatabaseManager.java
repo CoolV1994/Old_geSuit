@@ -1,23 +1,16 @@
 package net.cubespace.geSuit.managers;
 
-import net.cubespace.geSuit.database.Bans;
-import net.cubespace.geSuit.database.ConnectionPool;
-import net.cubespace.geSuit.database.Homes;
-import net.cubespace.geSuit.database.OnTime;
-import net.cubespace.geSuit.database.Players;
-import net.cubespace.geSuit.database.Portals;
-import net.cubespace.geSuit.database.Spawns;
-import net.cubespace.geSuit.database.Tracking;
-import net.cubespace.geSuit.database.Warps;
+import net.cubespace.geSuit.database.*;
 
 /**
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
 public class DatabaseManager {
     public static ConnectionPool connectionPool;
+    public static Players players;
+    public static Ignores ignores;
     public static Homes homes;
     public static Bans bans;
-    public static Players players;
     public static Portals portals;
     public static Spawns spawns;
     public static Warps warps;
@@ -26,6 +19,7 @@ public class DatabaseManager {
 
     static {
         players = new Players();
+        ignores = new Ignores();
         homes = new Homes();
         bans = new Bans();
         portals = new Portals();
@@ -36,6 +30,7 @@ public class DatabaseManager {
 
         connectionPool = new ConnectionPool();
         connectionPool.addRepository(players);
+        connectionPool.addRepository(ignores);
         connectionPool.addRepository(homes);
         connectionPool.addRepository(bans);
         connectionPool.addRepository(portals);

@@ -29,9 +29,11 @@ public class MainConfig extends Config {
     public String Table_Tracking = "tracking";
     @Comment("This can be used if you have multiple Proxies to seperate the Ontime in it")
     public String Table_OnTime = "ontime";
+    @Comment("This can be used if you have multiple Proxies to seperate the Ontime in it")
+    public String Table_Ignores = "ignores";
 
-    public Boolean ConvertFromBungeeSuite = false;
-    public Database BungeeSuiteDatabase = new Database();
+    /*public Boolean ConvertFromBungeeSuite = false;
+    public Database BungeeSuiteDatabase = new Database();*/
 
     @Comment("Turn this to false if you want to use your regular /motd comand (requires restart)")
     public Boolean MOTD_Enabled = true;
@@ -44,9 +46,6 @@ public class MainConfig extends Config {
     public Integer PlayerDisconnectDelay = 0;
     @Comment("This should be true on offline Mode Server since they can't use UUIDs provided by Mojang")
     public Boolean OverwriteUUID = false;
-    
-    @Comment("Enable this if you want to use BungeeChat with geSuit.")
-    public Boolean BungeeChatIntegration = false;
 
     @Comment("Do not alter this. It will be used automaticly.")
     public Boolean Inited = false;

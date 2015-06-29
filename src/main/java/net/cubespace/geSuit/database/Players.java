@@ -11,12 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import com.google.common.collect.Maps;
 
@@ -25,13 +20,12 @@ import com.google.common.collect.Maps;
  */
 public class Players implements IRepository {
 
-    public boolean playerExists(String player) {
+    public boolean playerExists(String uuid) {
         ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
 
         try {
             PreparedStatement playerExists = connectionHandler.getPreparedStatement("playerExists");
-            playerExists.setString(1, player);
-            playerExists.setString(2, player);
+            playerExists.setString(1, uuid);
 
             return playerExists.executeQuery().next();
         } catch (Exception e) {
@@ -43,13 +37,29 @@ public class Players implements IRepository {
         return true;
     }
 
-    public String getPlayerIP(String player) {
+    public boolean playerNameExists(String playerName) {
+        ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
+
+        try {
+            PreparedStatement playerExists = connectionHandler.getPreparedStatement("playerNameExists");
+            playerExists.setString(1, playerName);
+
+            return playerExists.executeQuery().next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connectionHandler.release();
+        }
+
+        return true;
+    }
+
+    public String getPlayerIP(String uuid) {
         ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
 
         try {
             PreparedStatement getPlayerIP = connectionHandler.getPreparedStatement("getPlayerIP");
-            getPlayerIP.setString(1, player);
-            getPlayerIP.setString(2, player);
+            getPlayerIP.setString(1, uuid);
 
             String ip = null;
             ResultSet res = getPlayerIP.executeQuery();
@@ -68,13 +78,12 @@ public class Players implements IRepository {
         return null;
     }
 
-    public boolean getPlayerTPS(String player) {
+    public boolean getPlayerTPS(String uuid) {
         ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
 
         try {
             PreparedStatement getPlayerTPS = connectionHandler.getPreparedStatement("getPlayerTPS");
-            getPlayerTPS.setString(1, player);
-            getPlayerTPS.setString(2, player);
+            getPlayerTPS.setString(1, uuid);
 
             boolean tps = true;
             ResultSet res = getPlayerTPS.executeQuery();
@@ -171,13 +180,17 @@ public class Players implements IRepository {
 
         try {
             PreparedStatement updatePlayer = connectionHandler.getPreparedStatement("updatePlayer");
-            updatePlayer.setString(1, gsPlayer.getUuid());
+            updatePlayer.setString(1, gsPlayer.getUuid().toString());
             updatePlayer.setString(2, gsPlayer.getName());
-            updatePlayer.setString(3, gsPlayer.getIp());
-            updatePlayer.setBoolean(4, gsPlayer.acceptingTeleports());
-            updatePlayer.setBoolean(5, gsPlayer.isNewSpawn());
-            updatePlayer.setString(6, gsPlayer.getName());
-            updatePlayer.setString(7, gsPlayer.getUuid());
+            updatePlayer.setString(3, gsPlayer.getNickname());
+            updatePlayer.setString(4, gsPlayer.getIp());
+            updatePlayer.setBoolean(5, gsPlayer.acceptingTeleports());
+            updatePlayer.setBoolean(6, gsPlayer.isNewSpawn());
+            updatePlayer.setString(7, gsPlayer.getChannel());
+            updatePlayer.setBoolean(8, gsPlayer.isMuted());
+            updatePlayer.setBoolean(9, gsPlayer.isChatSpying());
+            updatePlayer.setBoolean(10, gsPlayer.isDND());
+            updatePlayer.setString(11, gsPlayer.getUuid().toString());
 
             updatePlayer.executeUpdate();
         } catch (Exception e) {
@@ -187,18 +200,30 @@ public class Players implements IRepository {
         }
     }
 
-    public GSPlayer loadPlayer(String player) {
+    public GSPlayer loadPlayer(String uuid) {
         ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
 
         GSPlayer player1 = null;
         try {
             PreparedStatement getPlayer = connectionHandler.getPreparedStatement("getPlayer");
-            getPlayer.setString(1, player);
-            getPlayer.setString(2, player);
+            getPlayer.setString(1, uuid);
 
             ResultSet res = getPlayer.executeQuery();
             while (res.next()) {
-                player1 = new GSPlayer(res.getString("playername"), res.getString("uuid"), res.getBoolean("tps"), res.getBoolean("newspawn"), res.getString("ipaddress"), res.getTimestamp("lastonline"), res.getTimestamp("firstonline"));
+                player1 = new GSPlayer(
+                        res.getString("uuid"),
+                        res.getString("playername"),
+                        res.getString("nickname"),
+                        res.getString("ipaddress"),
+                        res.getTimestamp("lastonline"),
+                        res.getTimestamp("firstonline"),
+                        res.getBoolean("tps"),
+                        res.getBoolean("newspawn"),
+                        res.getString("channel"),
+                        res.getBoolean("muted"),
+                        res.getBoolean("chatspy"),
+                        res.getBoolean("dnd")
+                );
             }
 
             res.close();
@@ -393,34 +418,170 @@ public class Players implements IRepository {
         }
     }
 
+    public void setPlayerChannel(String uuid, String channel) {
+        ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
+
+        try {
+            PreparedStatement statement = connectionHandler.getPreparedStatement("setPlayerChannel");
+            statement.setString(1, uuid);
+            statement.setString(2, channel);
+
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connectionHandler.release();
+        }
+    }
+
+    public void setPlayerChatSpy(String uuid, boolean spying) {
+        ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
+
+        try {
+            PreparedStatement statement = connectionHandler.getPreparedStatement("setPlayerChatSpy");
+            statement.setString(1, uuid);
+            statement.setBoolean(2, spying);
+
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connectionHandler.release();
+        }
+    }
+
+    public boolean nickNameExists(String nickname) {
+        ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
+
+        try {
+            PreparedStatement nickExists = connectionHandler.getPreparedStatement("nickNameExists");
+            nickExists.setString(1, nickname);
+
+            return nickExists.executeQuery().next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connectionHandler.release();
+        }
+
+        return true;
+    }
+
+    public void setPlayerNickname(String uuid, String nickname) {
+        ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
+
+        try {
+            PreparedStatement statement = connectionHandler.getPreparedStatement("setPlayerNickname");
+            statement.setString(1, uuid);
+            statement.setString(2, nickname);
+
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connectionHandler.release();
+        }
+    }
+
+    public boolean isPlayerMuted(String uuid) {
+        ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
+
+        try {
+            PreparedStatement getMute = connectionHandler.getPreparedStatement("isPlayerMuted");
+            getMute.setString(1, uuid);
+
+            return getMute.executeQuery().next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connectionHandler.release();
+        }
+
+        return false;
+    }
+
+    public void mutePlayer(String uuid, boolean muted) {
+        ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
+
+        try {
+            PreparedStatement statement = connectionHandler.getPreparedStatement("mutePlayer");
+            statement.setString(1, uuid);
+            statement.setBoolean(2, muted);
+
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connectionHandler.release();
+        }
+    }
+
+    public String playerUsingNickname(String nickname) {
+        ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
+
+        try {
+            PreparedStatement getNick = connectionHandler.getPreparedStatement("playerUsingNickname");
+            getNick.setString(1, nickname);
+
+            String result = null;
+            ResultSet res = getNick.executeQuery();
+            while (res.next()) {
+                result = res.getString("nickname");
+            }
+            res.close();
+
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connectionHandler.release();
+        }
+
+        return null;
+    }
+
     @Override
     public String[] getTable() {
-        return new String[]{ConfigManager.main.Table_Players, "playername VARCHAR(100), "
-                + "uuid VARCHAR(100) NOT NULL,"
-                + "firstonline DATETIME NOT NULL, "
-                + "lastonline DATETIME NOT NULL, "
+        return new String[]{ConfigManager.main.Table_Players,
+                "uuid VARCHAR(100) NOT NULL,"
+                + "playername VARCHAR(100), "
+                + "nickname VARCHAR(100), "
                 + "ipaddress VARCHAR(100), "
+                + "lastonline DATETIME NOT NULL, "
+                + "firstonline DATETIME NOT NULL, "
                 + "tps TINYINT(1) DEFAULT 1,"
                 + "newspawn TINYINT(1) DEFAULT 0,"
+                + "channel VARCHAR(100), "
+                + "muted TINYINT(1) DEFAULT 1,"
+                + "chatspy TINYINT(1) DEFAULT 1,"
+                + "dnd TINYINT(1) DEFAULT 1,"
                 + "CONSTRAINT pk_uuid PRIMARY KEY (uuid)"};
     }
 
     @Override
     public void registerPreparedStatements(ConnectionHandler connection) {
-        connection.addPreparedStatement("getPlayerIP", "SELECT ipaddress FROM "+ ConfigManager.main.Table_Players +" WHERE playername = ? OR uuid = ?");
-        connection.addPreparedStatement("playerExists", "SELECT playername FROM "+ ConfigManager.main.Table_Players +" WHERE playername = ? OR uuid = ?");
-        connection.addPreparedStatement("getPlayerTPS", "SELECT tps FROM "+ ConfigManager.main.Table_Players +" WHERE playername = ? OR uuid = ?");
-        connection.addPreparedStatement("getPlayer", "SELECT * FROM "+ ConfigManager.main.Table_Players +" WHERE playername = ? OR uuid = ?");
+        connection.addPreparedStatement("getPlayerIP", "SELECT ipaddress FROM "+ ConfigManager.main.Table_Players +" WHERE uuid = ?");
+        connection.addPreparedStatement("playerExists", "SELECT uuid FROM "+ ConfigManager.main.Table_Players +" WHERE uuid = ?");
+        connection.addPreparedStatement("playerNameExists", "SELECT playername FROM "+ ConfigManager.main.Table_Players +" WHERE playername = ?");
+        connection.addPreparedStatement("getPlayerTPS", "SELECT tps FROM "+ ConfigManager.main.Table_Players +" WHERE uuid = ?");
+        connection.addPreparedStatement("getPlayer", "SELECT * FROM "+ ConfigManager.main.Table_Players +" WHERE uuid = ?");
         connection.addPreparedStatement("getAltPlayer", "SELECT playername, uuid FROM "+ ConfigManager.main.Table_Players +" WHERE ipaddress = ? ORDER BY lastonline DESC LIMIT 2");
-        connection.addPreparedStatement("matchPlayers", "SELECT playername,uuid FROM "+ ConfigManager.main.Table_Players +" WHERE playername like ? OR uuid like ? ORDER BY lastonline LIMIT 20");
+        connection.addPreparedStatement("matchPlayers", "SELECT playername, uuid FROM "+ ConfigManager.main.Table_Players +" WHERE playername like ? OR uuid like ? ORDER BY lastonline LIMIT 20");
         connection.addPreparedStatement("insertPlayer", "INSERT INTO "+ ConfigManager.main.Table_Players +" (playername,uuid,firstonline,lastonline,ipaddress) VALUES (?, ?, NOW(), NOW(), ?)");
         connection.addPreparedStatement("insertPlayerConvert", "INSERT INTO "+ ConfigManager.main.Table_Players +" (playername,uuid,firstonline,lastonline,ipaddress,tps) VALUES (?, ?, ?, ?, ?, ?)");
         connection.addPreparedStatement("getPlayers", "SELECT * FROM "+ ConfigManager.main.Table_Players);
         connection.addPreparedStatement("setUUID", "UPDATE "+ ConfigManager.main.Table_Players +" SET uuid = ? WHERE playername = ?");
-        connection.addPreparedStatement("updatePlayer", "UPDATE "+ ConfigManager.main.Table_Players +" SET uuid = ?, playername = ?, lastonline = NOW(), ipaddress = ?, tps = ?, newspawn = ? WHERE playername = ? OR uuid = ?");
-        connection.addPreparedStatement("resolvePlayerName", "SELECT playername,uuid FROM "+ ConfigManager.main.Table_Players +" WHERE FIND_IN_SET(playername, ?)");
-        connection.addPreparedStatement("resolveOldPlayerName", "SELECT player,uuid FROM "+ ConfigManager.main.Table_Tracking +" WHERE FIND_IN_SET(player, ?) GROUP BY player");
+        connection.addPreparedStatement("updatePlayer", "UPDATE "+ ConfigManager.main.Table_Players +" SET uuid = ?, playername = ?, nickname = ?, ipaddress = ?, lastonline = NOW(), tps = ?, newspawn = ?, channel = ?, muted = ?, chatspy = ?, dnd = ? WHERE uuid = ?");
+        connection.addPreparedStatement("resolvePlayerName", "SELECT playername, uuid FROM "+ ConfigManager.main.Table_Players +" WHERE FIND_IN_SET(playername, ?)");
+        connection.addPreparedStatement("resolveOldPlayerName", "SELECT player, uuid FROM "+ ConfigManager.main.Table_Tracking +" WHERE FIND_IN_SET(player, ?) GROUP BY player");
         connection.addPreparedStatement("resolveUUID", "SELECT playername,uuid FROM "+ ConfigManager.main.Table_Players +" WHERE FIND_IN_SET(uuid, ?)");
+        connection.addPreparedStatement("setPlayerChannel", "UPDATE "+ ConfigManager.main.Table_Players +" SET channel = ? WHERE uuid = ?");
+        connection.addPreparedStatement("setPlayerChatSpy", "UPDATE "+ ConfigManager.main.Table_Players +" SET chatspy = ? WHERE uuid = ?");
+        connection.addPreparedStatement("nickNameExists", "SELECT nickname FROM "+ ConfigManager.main.Table_Players +" WHERE nickname = ?");
+        connection.addPreparedStatement("setPlayerNickname", "UPDATE "+ ConfigManager.main.Table_Players +" SET nickname = ? WHERE uuid = ?");
+        connection.addPreparedStatement("isPlayerMuted", "SELECT muted FROM "+ ConfigManager.main.Table_Players +" WHERE uuid = ? AND muted = 1");
+        connection.addPreparedStatement("mutePlayer", "UPDATE "+ ConfigManager.main.Table_Players +" SET muted = ? WHERE uuid = ?");
+        connection.addPreparedStatement("playerUsingNickname", "SELECT playername FROM "+ ConfigManager.main.Table_Players +" WHERE nickname LIKE '%?%'");
     }
 
     @Override

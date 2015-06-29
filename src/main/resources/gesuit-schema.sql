@@ -69,6 +69,11 @@ CREATE TABLE `players` (
   `ipaddress` varchar(100) DEFAULT NULL,
   `tps` tinyint(1) DEFAULT '1',
   `newspawn` tinyint(1) DEFAULT '0',
+  `nickname` varchar(100) DEFAULT NULL,
+  `channel` varchar(100) DEFAULT NULL,
+  `muted` tinyint(1) DEFAULT '0',
+  `chatspy` tinyint(1) DEFAULT '0',
+  `dnd` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -82,9 +87,9 @@ CREATE TABLE `players` (
 CREATE TABLE `portals` (
   `portalname` varchar(100) NOT NULL DEFAULT '',
   `server` varchar(100) DEFAULT NULL,
+  `world` varchar(100) DEFAULT NULL,
   `type` varchar(20) DEFAULT NULL,
   `destination` varchar(100) DEFAULT NULL,
-  `world` varchar(100) DEFAULT NULL,
   `filltype` varchar(100) DEFAULT 'AIR',
   `xmax` int(11) DEFAULT NULL,
   `xmin` int(11) DEFAULT NULL,
