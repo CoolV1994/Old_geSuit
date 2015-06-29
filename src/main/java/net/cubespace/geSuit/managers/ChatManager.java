@@ -307,6 +307,7 @@ public class ChatManager {
 		} else {
 			t = s;
 		}
+		// Are we removing the nick?
 		if ( on == false ) {
 			PlayerManager.removeNickname( target );
 			if ( s.getName().equals( target ) ) {
@@ -319,15 +320,21 @@ public class ChatManager {
 			}
 			return;
 		}
+		// Has it been taken already?
 		if ( PlayerManager.nickNameExists( nickname ) ) {
 			s.sendMessage( ConfigManager.messages.NICKNAME_TAKEN );
 			return;
 		}
+		// TODO: Remove this if - does it even get used?
+		// Has it been taken already and is the targets username the same as the nickname?
 		if (PlayerManager.nickNameExists(nickname) && !t.getName().equals( nickname ) ) {
 			s.sendMessage( ConfigManager.messages.NICKNAME_TAKEN );
 			return;
 		}
+		// TODO: Add in impersonation prevention
+		// Assign the nickname
 		PlayerManager.setPlayersNickname( target, nickname );
+		// Send out messages
 		if ( t != null && !t.equals( s ) ) {
 			s.sendMessage( ConfigManager.messages.NICKNAMED_PLAYER.replace( "{player}", target ).replace( "{name}", nickname ) );
 			if ( t != null ) {

@@ -496,19 +496,13 @@ public class PlayerManager {
         return DatabaseManager.players.nickNameExists(nick);
     }
 
-    public static void setPlayersNickname( String p, String nick ) throws SQLException {
-        String uuid;
-        if ( isPlayerOnline( p ) ) {
-            GSPlayer player = getPlayer(p);
-            player.setNickname(nick);
-            player.updateDisplayName();
-            player.updatePlayer();
-            uuid = player.getUuid();
-        } else {
-            uuid = Utilities.getUUID( p );
-        }
-        if (uuid != null) {
-            DatabaseManager.players.setPlayerNickname(uuid, nick);
+    public static void setPlayersNickname( String player, String nick ) throws SQLException {
+        GSPlayer p = matchOnlinePlayer( player );
+        if ( p != null ) {
+            p.setNickname(nick);
+            p.updateDisplayName();
+            p.updatePlayer();
+            DatabaseManager.players.setPlayerNickname(p.getUuid(), nick);
         }
     }
 
@@ -523,7 +517,7 @@ public class PlayerManager {
     }
 
     public static void mutePlayer( String target ) throws SQLException {
-        GSPlayer p = matchOnlinePlayer(target );
+        GSPlayer p = matchOnlinePlayer( target );
         boolean isMuted = isPlayerMuted( target );
         if ( p != null ) {
             if ( isMuted ) {
