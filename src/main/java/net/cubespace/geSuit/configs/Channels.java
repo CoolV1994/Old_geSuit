@@ -1,13 +1,13 @@
 package net.cubespace.geSuit.configs;
 
 import net.cubespace.Yamler.Config.Config;
-import net.cubespace.geSuit.geSuit;
 import net.cubespace.geSuit.configs.SubConfig.ServerChannel;
+import net.cubespace.geSuit.geSuit;
 
 import java.io.File;
 import java.util.HashMap;
 
-public class Channels  extends Config {
+public class Channels extends Config {
 	public Channels() {
 		CONFIG_FILE = new File(geSuit.instance.getDataFolder(), "channels.yml");
 	}

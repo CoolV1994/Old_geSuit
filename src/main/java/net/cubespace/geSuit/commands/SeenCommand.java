@@ -12,23 +12,23 @@ import net.md_5.bungee.api.plugin.Command;
  * What does it do: Displays <player> last online time
  */
 public class SeenCommand extends Command {
-    public SeenCommand() {
-        super("seen");
-    }
+	public SeenCommand() {
+		super("seen");
+	}
 
-    @Override
-    public void execute(CommandSender sender, String[] args) {
-        if (!(sender.hasPermission("gesuit.seen") || sender.hasPermission("gesuit.admin"))) {
-            PlayerManager.sendMessageToTarget(sender, ConfigManager.messages.NO_PERMISSION);
+	@Override
+	public void execute(CommandSender sender, String[] args) {
+		if (!(sender.hasPermission("gesuit.seen") || sender.hasPermission("gesuit.admin"))) {
+			PlayerManager.sendMessageToTarget(sender, ConfigManager.messages.NO_PERMISSION);
 
-            return;
-        }
+			return;
+		}
 
-        if (args.length == 0) {
-            PlayerManager.sendMessageToTarget(sender, ConfigManager.messages.BUNGEE_COMMAND_SEEN_USAGE);
-            return;
-        }
+		if (args.length == 0) {
+			PlayerManager.sendMessageToTarget(sender, ConfigManager.messages.BUNGEE_COMMAND_SEEN_USAGE);
+			return;
+		}
 
-        PlayerManager.sendMessageToTarget(sender, PlayerManager.getLastSeeninfos(args[0], sender.hasPermission("gesuit.seen.extra"), sender.hasPermission("gesuit.seen.vanish")));
-    }
+		PlayerManager.sendMessageToTarget(sender, PlayerManager.getLastSeeninfos(args[0], sender.hasPermission("gesuit.seen.extra"), sender.hasPermission("gesuit.seen.vanish")));
+	}
 }

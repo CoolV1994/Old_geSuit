@@ -11,9 +11,9 @@ import java.util.List;
 
 public class IgnoresManager {
 
-	public static void LoadPlayersIgnores(GSPlayer p) throws SQLException{
+	public static void LoadPlayersIgnores(GSPlayer p) throws SQLException {
 		List<String> ignores = DatabaseManager.ignores.getIgnores(p.getUuid());
-		for (String ignoring : ignores){
+		for (String ignoring : ignores) {
 			p.addIgnore(ignoring);
 		}
 	}
@@ -40,7 +40,7 @@ public class IgnoresManager {
 		SendPlayerIgnores.execute(p, p.getProxiedPlayer().getServer().getInfo());
 	}
 
-	public static void removeIgnore(GSPlayer p, String ignore) throws SQLException{
+	public static void removeIgnore(GSPlayer p, String ignore) throws SQLException {
 		GSPlayer target = PlayerManager.matchOnlinePlayer(ignore);
 		String ignoreUUID;
 		if (target != null) {
@@ -48,25 +48,25 @@ public class IgnoresManager {
 		} else {
 			ignoreUUID = Utilities.getUUID(ignore);
 		}
-		if(p.isIgnoring(ignore)){
+		if (p.isIgnoring(ignore)) {
 			p.removeIgnore(ignore);
 			DatabaseManager.ignores.removeIgnore(p.getUuid(), ignoreUUID);
 			p.sendMessage(ConfigManager.messages.PLAYER_UNIGNORED.replace("{player}", ignore));
-		}else{
+		} else {
 			p.sendMessage(ConfigManager.messages.PLAYER_NOT_IGNORED.replace("{player}", ignore));
 		}
 		SendPlayerIgnores.execute(p, p.getProxiedPlayer().getServer().getInfo());
 	}
 
-	public static boolean playerHasIgnores(GSPlayer p){
+	public static boolean playerHasIgnores(GSPlayer p) {
 		return p.hasIgnores();
 	}
 
 	public static Collection<GSPlayer> getPlayersIgnorers(String player) {
 		Collection<GSPlayer> players = new ArrayList<GSPlayer>();
-		for(GSPlayer p: PlayerManager.getPlayers()){
-			if(p.hasIgnores()){
-				if(p.isIgnoring(player)){
+		for (GSPlayer p : PlayerManager.getPlayers()) {
+			if (p.hasIgnores()) {
+				if (p.isIgnoring(player)) {
 					players.add(p);
 				}
 			}

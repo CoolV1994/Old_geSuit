@@ -8,28 +8,23 @@ package net.cubespace.geSuit.events;
 import net.md_5.bungee.api.plugin.Event;
 
 /**
- *
  * @author JR
  */
-public class NewPlayerJoinEvent extends Event
-{
+public class NewPlayerJoinEvent extends Event {
 
-    private String message;
-    private String player;
+	private String message;
+	private String player;
 
-    public NewPlayerJoinEvent(String playerName, String message)
-    {
-        this.player = playerName;
-        this.message = message;
-    }
+	public NewPlayerJoinEvent(String playerName, String message) {
+		this.player = playerName;
+		this.message = message;
+	}
 
-    public String getMessage()
-    {
-        return message;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public String getPlayer()
-    {
-        return player;
-    }
+	public String getPlayer() {
+		return player;
+	}
 }

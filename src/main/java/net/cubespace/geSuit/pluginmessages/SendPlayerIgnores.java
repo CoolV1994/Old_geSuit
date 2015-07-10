@@ -1,7 +1,6 @@
 package net.cubespace.geSuit.pluginmessages;
 
 import net.cubespace.geSuit.geSuit;
-import net.cubespace.geSuit.objects.Channel;
 import net.cubespace.geSuit.objects.GSPlayer;
 import net.cubespace.geSuit.tasks.SendPluginMessage;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -16,7 +15,7 @@ import java.io.IOException;
 public class SendPlayerIgnores {
 	public static String OUTGOING_CHANNEL = "geSuitChat";
 
-	public static void execute( GSPlayer player, ServerInfo server ) {
+	public static void execute(GSPlayer player, ServerInfo server) {
 		if (player.hasIgnores()) {
 			String ignores = "";
 			for (String str : player.getIgnores()) {

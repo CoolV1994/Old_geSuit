@@ -1,9 +1,9 @@
 package net.cubespace.geSuit.pluginmessages;
 
+import net.cubespace.geSuit.configs.SubConfig.ServerChannel;
 import net.cubespace.geSuit.geSuit;
 import net.cubespace.geSuit.managers.ChatManager;
 import net.cubespace.geSuit.managers.ConfigManager;
-import net.cubespace.geSuit.configs.SubConfig.ServerChannel;
 import net.cubespace.geSuit.tasks.SendPluginMessage;
 import net.md_5.bungee.api.config.ServerInfo;
 
@@ -22,13 +22,13 @@ public class SendServerChannelData {
 		DataOutputStream out = new DataOutputStream(bytes);
 		try {
 			out.writeUTF("SendServerData");
-			ServerChannel sd = ChatManager.serverData.get( server.getName() );
-			out.writeUTF( sd.serverName );
-			out.writeUTF( sd.shortName );
+			ServerChannel sd = ChatManager.serverData.get(server.getName());
+			out.writeUTF(sd.serverName);
+			out.writeUTF(sd.shortName);
 			out.writeInt(sd.localDistance);
-			out.writeBoolean( sd.connectionMessages );
+			out.writeBoolean(sd.connectionMessages);
 			out.writeUTF(ConfigManager.chat.globalChatRegex);
-		} catch ( IOException e ) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 

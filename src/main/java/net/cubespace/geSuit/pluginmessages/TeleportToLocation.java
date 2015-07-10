@@ -14,46 +14,43 @@ import java.io.IOException;
 /**
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
-public class TeleportToLocation
-{
+public class TeleportToLocation {
 
-    public static String OUTGOING_CHANNEL = "geSuitTeleport";
+	public static String OUTGOING_CHANNEL = "geSuitTeleport";
 
-    public static void execute(GSPlayer player, Location location)
-    {
-        if (location.getServer() == null) {
-            geSuit.instance.getLogger().severe("Location has no Server, this should never happen. Please check");
-            new Exception("").printStackTrace();
-            return;
-        }
+	public static void execute(GSPlayer player, Location location) {
+		if (location.getServer() == null) {
+			geSuit.instance.getLogger().severe("Location has no Server, this should never happen. Please check");
+			new Exception("").printStackTrace();
+			return;
+		}
 
-        if (player == null) {
-        	LoggingManager.log(ChatColor.RED + "Warning! Teleport called but player is null!");
-            new Exception("").printStackTrace();
-        	return;
-        }
-        
-        if (player.getServer() == null || !player.getServer().equals(location.getServer().getName())) {
-            player.getProxiedPlayer().connect(location.getServer());
-        }
+		if (player == null) {
+			LoggingManager.log(ChatColor.RED + "Warning! Teleport called but player is null!");
+			new Exception("").printStackTrace();
+			return;
+		}
 
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(bytes);
+		if (player.getServer() == null || !player.getServer().equals(location.getServer().getName())) {
+			player.getProxiedPlayer().connect(location.getServer());
+		}
 
-        try {
-            out.writeUTF("TeleportToLocation");
-            out.writeUTF(player.getName());
-            out.writeUTF(location.getWorld());
-            out.writeDouble(location.getX());
-            out.writeDouble(location.getY());
-            out.writeDouble(location.getZ());
-            out.writeFloat(location.getYaw());
-            out.writeFloat(location.getPitch());
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		DataOutputStream out = new DataOutputStream(bytes);
 
-        geSuit.proxy.getScheduler().runAsync(geSuit.instance, new SendPluginMessage(OUTGOING_CHANNEL, location.getServer(), bytes));
-    }
+		try {
+			out.writeUTF("TeleportToLocation");
+			out.writeUTF(player.getName());
+			out.writeUTF(location.getWorld());
+			out.writeDouble(location.getX());
+			out.writeDouble(location.getY());
+			out.writeDouble(location.getZ());
+			out.writeFloat(location.getYaw());
+			out.writeFloat(location.getPitch());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		geSuit.proxy.getScheduler().runAsync(geSuit.instance, new SendPluginMessage(OUTGOING_CHANNEL, location.getServer(), bytes));
+	}
 }

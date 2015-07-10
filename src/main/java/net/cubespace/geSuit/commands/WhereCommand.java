@@ -8,20 +8,20 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 public class WhereCommand extends Command {
-    public WhereCommand() {
-        super("!where");
-    }
+	public WhereCommand() {
+		super("!where");
+	}
 
-    @Override
-    public void execute(CommandSender sender, String[] args) {
-        if (sender instanceof ProxiedPlayer) {
-            return;
-        }
+	@Override
+	public void execute(CommandSender sender, String[] args) {
+		if (sender instanceof ProxiedPlayer) {
+			return;
+		}
 
-        if (args.length == 0) {
-            PlayerManager.sendMessageToTarget(sender, ConfigManager.messages.BUNGEE_COMMAND_WHERE_USAGE);
-            return;
-        }
+		if (args.length == 0) {
+			PlayerManager.sendMessageToTarget(sender, ConfigManager.messages.BUNGEE_COMMAND_WHERE_USAGE);
+			return;
+		}
 
 		String search, options;
 		if (args.length == 1) {
@@ -32,6 +32,6 @@ public class WhereCommand extends Command {
 			search = args[1];
 		}
 
-        BansManager.displayWhereHistory(sender.getName(), options, search);
-    }
+		BansManager.displayWhereHistory(sender.getName(), options, search);
+	}
 }

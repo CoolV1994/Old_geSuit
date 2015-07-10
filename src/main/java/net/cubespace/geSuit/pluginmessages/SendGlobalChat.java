@@ -16,21 +16,21 @@ import java.io.IOException;
 public class SendGlobalChat {
 	public static String OUTGOING_CHANNEL = "geSuitChat";
 
-	public static void execute( String player, String message, ServerInfo server ) {
-		if ( ConfigManager.chat.logChat ) {
+	public static void execute(String player, String message, ServerInfo server) {
+		if (ConfigManager.chat.logChat) {
 			LoggingManager.log(message);
 		}
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		DataOutputStream out = new DataOutputStream( bytes );
+		DataOutputStream out = new DataOutputStream(bytes);
 		try {
 			out.writeUTF("SendGlobalChat");
 			out.writeUTF(player);
 			out.writeUTF(message);
-		} catch ( IOException e ) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		for ( ServerInfo proxyServer : geSuit.proxy.getServers().values() ) {
-			if ( !proxyServer.getName().equals(server.getName()) && proxyServer.getPlayers().size() > 0 ) {
+		for (ServerInfo proxyServer : geSuit.proxy.getServers().values()) {
+			if (!proxyServer.getName().equals(server.getName()) && proxyServer.getPlayers().size() > 0) {
 				geSuit.proxy.getScheduler().runAsync(geSuit.instance, new SendPluginMessage(OUTGOING_CHANNEL, proxyServer, bytes));
 			}
 		}

@@ -13,24 +13,24 @@ import java.io.IOException;
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
 public class TeleportToPlayer {
-    public static String OUTGOING_CHANNEL = "geSuitTeleport";
+	public static String OUTGOING_CHANNEL = "geSuitTeleport";
 
-    public static void execute(GSPlayer player, GSPlayer target) {
-        if (!player.getServer().equals(target.getServer())) {
-            player.getProxiedPlayer().connect(ProxyServer.getInstance().getServerInfo(target.getServer()));
-        }
+	public static void execute(GSPlayer player, GSPlayer target) {
+		if (!player.getServer().equals(target.getServer())) {
+			player.getProxiedPlayer().connect(ProxyServer.getInstance().getServerInfo(target.getServer()));
+		}
 
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(bytes);
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		DataOutputStream out = new DataOutputStream(bytes);
 
-        try {
-            out.writeUTF("TeleportToPlayer");
-            out.writeUTF(player.getName());
-            out.writeUTF(target.getName());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+		try {
+			out.writeUTF("TeleportToPlayer");
+			out.writeUTF(player.getName());
+			out.writeUTF(target.getName());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		geSuit.proxy.getScheduler().runAsync(geSuit.instance, new SendPluginMessage(OUTGOING_CHANNEL, ProxyServer.getInstance().getServerInfo(target.getServer()), bytes));
-    }
+	}
 }

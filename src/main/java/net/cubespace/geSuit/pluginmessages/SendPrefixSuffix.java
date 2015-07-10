@@ -20,10 +20,10 @@ public class SendPrefixSuffix {
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 		DataOutputStream out = new DataOutputStream(bytes);
 
-		out.writeUTF( "PrefixesAndSuffixes" );
-		out.writeBoolean( prefix );
-		out.writeUTF( group );
-		out.writeUTF( affix );
+		out.writeUTF("PrefixesAndSuffixes");
+		out.writeBoolean(prefix);
+		out.writeUTF(group);
+		out.writeUTF(affix);
 
 		geSuit.proxy.getScheduler().runAsync(geSuit.instance, new SendPluginMessage(OUTGOING_CHANNEL, server, bytes));
 	}

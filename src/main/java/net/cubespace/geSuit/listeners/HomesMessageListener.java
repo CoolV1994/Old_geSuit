@@ -20,62 +20,62 @@ import java.sql.SQLException;
 
 public class HomesMessageListener implements Listener {
 
-    @EventHandler
-    public void receivePluginMessage( PluginMessageEvent event ) throws IOException, SQLException {
-        if ( event.isCancelled() ) {
-            return;
-        }
+	@EventHandler
+	public void receivePluginMessage(PluginMessageEvent event) throws IOException, SQLException {
+		if (event.isCancelled()) {
+			return;
+		}
 
-        if ( !( event.getSender() instanceof Server ) )
-            return;
+		if (!(event.getSender() instanceof Server))
+			return;
 
-        if ( !event.getTag().equalsIgnoreCase( "geSuitHomes" ) ) {
-            return;
-        }
+		if (!event.getTag().equalsIgnoreCase("geSuitHomes")) {
+			return;
+		}
 
 		// Message debugging (can be toggled live)
 		if (geSuit.instance.isDebugEnabled()) {
 			Utilities.dumpPacket(event.getTag(), "RECV", event.getData(), true);
 		}
 
-        event.setCancelled( true );
+		event.setCancelled(true);
 
-        DataInputStream in = new DataInputStream( new ByteArrayInputStream( event.getData() ) );
+		DataInputStream in = new DataInputStream(new ByteArrayInputStream(event.getData()));
 
-        String task = in.readUTF();
+		String task = in.readUTF();
 
-        // TODO: Add input validation! Don't assume all inputs are valid player names (or online)
-        if ( task.equals( "DeleteHome" ) ) {
-            HomesManager.deleteHome(in.readUTF(), in.readUTF() );
-        } else if ( task.equals( "SendPlayerHome" ) ) { //SendOtherPlayerHome sendPlayerToOtherHome
-            HomesManager.sendPlayerToHome( PlayerManager.getPlayer(in.readUTF(), true), in.readUTF() );
-        } else if ( task.equals( "SendOtherPlayerHome" ) ) {
-            HomesManager.sendPlayerToOtherHome( PlayerManager.getPlayer(in.readUTF(), true), in.readUTF(), in.readUTF() );
-        } else if ( task.equals( "SetPlayersHome" ) ) {
-            String player = in.readUTF();
-            GSPlayer gsPlayer = PlayerManager.getPlayer(player, true);
+		// TODO: Add input validation! Don't assume all inputs are valid player names (or online)
+		if (task.equals("DeleteHome")) {
+			HomesManager.deleteHome(in.readUTF(), in.readUTF());
+		} else if (task.equals("SendPlayerHome")) { //SendOtherPlayerHome sendPlayerToOtherHome
+			HomesManager.sendPlayerToHome(PlayerManager.getPlayer(in.readUTF(), true), in.readUTF());
+		} else if (task.equals("SendOtherPlayerHome")) {
+			HomesManager.sendPlayerToOtherHome(PlayerManager.getPlayer(in.readUTF(), true), in.readUTF(), in.readUTF());
+		} else if (task.equals("SetPlayersHome")) {
+			String player = in.readUTF();
+			GSPlayer gsPlayer = PlayerManager.getPlayer(player, true);
 
-            if (gsPlayer == null) {
-                gsPlayer = DatabaseManager.players.loadPlayer(player);
+			if (gsPlayer == null) {
+				gsPlayer = DatabaseManager.players.loadPlayer(player);
 
-                if (gsPlayer == null) {
-                    DatabaseManager.players.insertPlayer(new GSPlayer(Utilities.getUUID(player), player), "0.0.0.0");
-                    gsPlayer = DatabaseManager.players.loadPlayer(player);
-                    gsPlayer.setServer(((Server) event.getSender()).getInfo().getName());
-                } else {
-                    gsPlayer.setServer(((Server) event.getSender()).getInfo().getName());
-                }
-            }
+				if (gsPlayer == null) {
+					DatabaseManager.players.insertPlayer(new GSPlayer(Utilities.getUUID(player), player), "0.0.0.0");
+					gsPlayer = DatabaseManager.players.loadPlayer(player);
+					gsPlayer.setServer(((Server) event.getSender()).getInfo().getName());
+				} else {
+					gsPlayer.setServer(((Server) event.getSender()).getInfo().getName());
+				}
+			}
 
-            HomesManager.createNewHome(gsPlayer, in.readInt(), in.readInt(), in.readUTF(), new Location(((Server) event.getSender()).getInfo().getName(), in.readUTF(), in.readDouble(), in.readDouble(), in.readDouble(), in.readFloat(), in.readFloat()));
-        } else if ( task.equals( "GetHomesList" ) ) {
-            HomesManager.listPlayersHomes( PlayerManager.getPlayer(in.readUTF(), true) );
-        } else if ( task.equals( "GetOtherHomesList" ) ) {
-            HomesManager.listOtherPlayersHomes( PlayerManager.getPlayer(in.readUTF(), true), in.readUTF() );
-        } else if ( task.equals( "SendVersion" ) ) {
-            LoggingManager.log( in.readUTF() );
-        }
+			HomesManager.createNewHome(gsPlayer, in.readInt(), in.readInt(), in.readUTF(), new Location(((Server) event.getSender()).getInfo().getName(), in.readUTF(), in.readDouble(), in.readDouble(), in.readDouble(), in.readFloat(), in.readFloat()));
+		} else if (task.equals("GetHomesList")) {
+			HomesManager.listPlayersHomes(PlayerManager.getPlayer(in.readUTF(), true));
+		} else if (task.equals("GetOtherHomesList")) {
+			HomesManager.listOtherPlayersHomes(PlayerManager.getPlayer(in.readUTF(), true), in.readUTF());
+		} else if (task.equals("SendVersion")) {
+			LoggingManager.log(in.readUTF());
+		}
 
-        in.close();
-    }
+		in.close();
+	}
 }

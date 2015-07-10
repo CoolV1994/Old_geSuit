@@ -1,20 +1,20 @@
 package net.cubespace.geSuit.objects;
 
 public class TimeRecord {
-    private String uuid;
+	private String uuid;
 
 	private long timeTotal;
 	private long timeSession;
-    private long timeToday;
-    private long timeWeek;
-    private long timeMonth;
-    private long timeYear;
+	private long timeToday;
+	private long timeWeek;
+	private long timeMonth;
+	private long timeYear;
 
-    public TimeRecord(String uuid) {
-        this.uuid = uuid;
-    }
+	public TimeRecord(String uuid) {
+		this.uuid = uuid;
+	}
 
-    public String getUuid() {
+	public String getUuid() {
 		return uuid;
 	}
 

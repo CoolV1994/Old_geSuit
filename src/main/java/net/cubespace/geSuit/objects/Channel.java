@@ -1,8 +1,8 @@
 package net.cubespace.geSuit.objects;
 
-import java.util.ArrayList;
-
 import net.cubespace.geSuit.managers.PlayerManager;
+
+import java.util.ArrayList;
 
 
 public class Channel {
@@ -14,16 +14,16 @@ public class Channel {
 	private boolean open;
 	private ArrayList<GSPlayer> members;
 
-	public Channel(String name, String format, String owner, boolean muted, boolean isDefault,boolean open){
+	public Channel(String name, String format, String owner, boolean muted, boolean isDefault, boolean open) {
 		this.name = name;
 		this.format = format;
 		this.owner = owner;
 		this.muted = muted;
-		this.isDefault=isDefault;
+		this.isDefault = isDefault;
 		members = new ArrayList<GSPlayer>();
 	}
 
-	public Channel(String serialised){
+	public Channel(String serialised) {
 		String data[] = serialised.split("~");
 		name = data[0];
 		format = data[1];
@@ -35,77 +35,93 @@ public class Channel {
 	}
 
 
-	public String getName(){
+	public String getName() {
 		return name;
 	}
-	public void setName(String name){
+
+	public void setName(String name) {
 		this.name = name;
 	}
-	public String format(){
+
+	public String format() {
 		return format;
 	}
-	public void setFormat(String format){
-		this.format=format;
+
+	public void setFormat(String format) {
+		this.format = format;
 	}
-	public String getOwner(){
+
+	public String getOwner() {
 		return owner;
 	}
-	public void setOwner(String owner){
+
+	public void setOwner(String owner) {
 		this.owner = owner;
 	}
-	public boolean isOwner(String owner){
+
+	public boolean isOwner(String owner) {
 		return this.owner.equals(owner);
 	}
-	public boolean isMuted(){
+
+	public boolean isMuted() {
 		return muted;
 	}
-	public void setMuted(boolean mute){
+
+	public void setMuted(boolean mute) {
 		this.muted = mute;
 	}
-	public boolean isMember(GSPlayer player){
+
+	public boolean isMember(GSPlayer player) {
 		return members.contains(player);
 	}
-	public boolean isDefault(){
+
+	public boolean isDefault() {
 		return isDefault;
 	}
-	public boolean hasMemberLike(String player){
-		for(GSPlayer GSPlayer: members){
-			if(GSPlayer.getName().contains(player)){
+
+	public boolean hasMemberLike(String player) {
+		for (GSPlayer GSPlayer : members) {
+			if (GSPlayer.getName().contains(player)) {
 				return true;
 			}
 		}
 		return false;
 	}
-	public GSPlayer getPlayer(String name){
-		for(GSPlayer player: members){
-			if(player.getName().equals(name)){
+
+	public GSPlayer getPlayer(String name) {
+		for (GSPlayer player : members) {
+			if (player.getName().equals(name)) {
 				return player;
 			}
 		}
 		return null;
 	}
-	public GSPlayer getSimilarPlayer(String name){
-		for(GSPlayer player: members){
-			if(player.getName().contains(name)){
+
+	public GSPlayer getSimilarPlayer(String name) {
+		for (GSPlayer player : members) {
+			if (player.getName().contains(name)) {
 				return player;
 			}
 		}
 		return null;
 	}
-	public void addMember(String player){
+
+	public void addMember(String player) {
 		GSPlayer p = PlayerManager.getPlayer(player);
 		members.add(p);
 		p.joinChannel(this);
 	}
-	public void removeMember(String player){
+
+	public void removeMember(String player) {
 		members.remove(PlayerManager.getPlayer(player));
 	}
-	public ArrayList<GSPlayer> getMembers(){
+
+	public ArrayList<GSPlayer> getMembers() {
 		return members;
 	}
 
-	public String serialise(){
-		return name+"~"+format+"~"+owner+"~"+muted+"~"+isDefault+"~"+open;
+	public String serialise() {
+		return name + "~" + format + "~" + owner + "~" + muted + "~" + isDefault + "~" + open;
 	}
 
 	public void addMember(GSPlayer p) {
@@ -115,18 +131,18 @@ public class Channel {
 	}
 
 	public String getStatus() {
-		if(open){
+		if (open) {
 			return "open";
-		}else{
+		} else {
 			return "close";
 		}
 	}
 
-	public boolean isOpen(){
+	public boolean isOpen() {
 		return open;
 	}
 
-	public void setOpen(boolean open){
-		this.open=open;
+	public void setOpen(boolean open) {
+		this.open = open;
 	}
 }

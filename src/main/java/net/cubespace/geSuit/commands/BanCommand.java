@@ -9,39 +9,39 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
 public class BanCommand extends Command {
-    public BanCommand() {
-        super("!ban");
-    }
+	public BanCommand() {
+		super("!ban");
+	}
 
-    @Override
-    public void execute(CommandSender sender, String[] args) {
-        if (sender instanceof ProxiedPlayer) {
-            return;
-        }
+	@Override
+	public void execute(CommandSender sender, String[] args) {
+		if (sender instanceof ProxiedPlayer) {
+			return;
+		}
 
-        if (args.length == 0) {
-            PlayerManager.sendMessageToTarget(sender, ConfigManager.messages.BUNGEE_COMMAND_BAN_USAGE);
-            return;
-        }
-        
-        String reason = null;
-        if (args.length > 1) {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 1; i < args.length; ++i) {
-                if (i != 1) {
-                    builder.append(' ');
-                }
-                
-                builder.append(args[i]);
-            }
-            
-            reason = builder.toString();
-        }
-        
-        if (Utilities.isIPAddress(args[0])) {
-            BansManager.banIP(sender.getName(), args[0], reason);
-        } else {
-            BansManager.banPlayer(sender.getName(), args[0], reason);
-        }
-    }
+		if (args.length == 0) {
+			PlayerManager.sendMessageToTarget(sender, ConfigManager.messages.BUNGEE_COMMAND_BAN_USAGE);
+			return;
+		}
+
+		String reason = null;
+		if (args.length > 1) {
+			StringBuilder builder = new StringBuilder();
+			for (int i = 1; i < args.length; ++i) {
+				if (i != 1) {
+					builder.append(' ');
+				}
+
+				builder.append(args[i]);
+			}
+
+			reason = builder.toString();
+		}
+
+		if (Utilities.isIPAddress(args[0])) {
+			BansManager.banIP(sender.getName(), args[0], reason);
+		} else {
+			BansManager.banPlayer(sender.getName(), args[0], reason);
+		}
+	}
 }

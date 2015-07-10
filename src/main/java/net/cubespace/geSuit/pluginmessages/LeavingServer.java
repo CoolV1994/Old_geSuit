@@ -8,29 +8,26 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class LeavingServer
-{
-    public static String OUTGOING_CHANNEL = "geSuitTeleport";
+public class LeavingServer {
+	public static String OUTGOING_CHANNEL = "geSuitTeleport";
 
-    public static void execute(GSPlayer player)
-    {
-        if (player.getServer() == null) {
-            geSuit.instance.getLogger().severe("Player has no Server, this should never happen. Please check");
-            new Throwable().printStackTrace();
-            return;
-        }
+	public static void execute(GSPlayer player) {
+		if (player.getServer() == null) {
+			geSuit.instance.getLogger().severe("Player has no Server, this should never happen. Please check");
+			new Throwable().printStackTrace();
+			return;
+		}
 
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(bytes);
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		DataOutputStream out = new DataOutputStream(bytes);
 
-        try {
-            out.writeUTF("LeavingServer");
-            out.writeUTF(player.getName());
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+		try {
+			out.writeUTF("LeavingServer");
+			out.writeUTF(player.getName());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-        geSuit.proxy.getScheduler().runAsync(geSuit.instance, new SendPluginMessage(OUTGOING_CHANNEL, player.getProxiedPlayer().getServer().getInfo(), bytes));
-    }
+		geSuit.proxy.getScheduler().runAsync(geSuit.instance, new SendPluginMessage(OUTGOING_CHANNEL, player.getProxiedPlayer().getServer().getInfo(), bytes));
+	}
 }

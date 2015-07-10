@@ -30,11 +30,11 @@ public class ServerChannel extends Config {
 	public boolean usingTowny;
 
 	public String getForcedChannel() {
-		if ( forcedChannel.equalsIgnoreCase( "server" ) ) {
+		if (forcedChannel.equalsIgnoreCase("server")) {
 			return serverName;
-		} else if ( forcedChannel.equalsIgnoreCase( "global" ) ) {
+		} else if (forcedChannel.equalsIgnoreCase("global")) {
 			return "Global";
-		} else if ( forcedChannel.equalsIgnoreCase( "local" ) ) {
+		} else if (forcedChannel.equalsIgnoreCase("local")) {
 			return serverName + " Local";
 		} else {
 			return forcedChannel;
