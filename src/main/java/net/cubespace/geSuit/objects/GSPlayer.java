@@ -317,7 +317,7 @@ public class GSPlayer {
 
 	public void setChatSpying(boolean spy) {
 		this.chatspying = spy;
-		//updatePlayer();
+		updatePlayer();
 	}
 
 	public boolean isDND() {

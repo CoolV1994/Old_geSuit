@@ -435,8 +435,8 @@ public class Players implements IRepository {
 
 		try {
 			PreparedStatement statement = connectionHandler.getPreparedStatement("setPlayerChatSpy");
-			statement.setString(1, uuid);
-			statement.setBoolean(2, spying);
+			statement.setBoolean(1, spying);
+			statement.setString(2, uuid);
 
 			statement.executeUpdate();
 		} catch (Exception e) {
