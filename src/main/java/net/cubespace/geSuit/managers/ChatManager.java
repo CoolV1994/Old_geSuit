@@ -62,12 +62,6 @@ public class ChatManager {
 				chan = new ServerChannel();
 				chan.serverName = serverName;
 				chan.shortName = serverName.substring(0, 1);
-				chan.serverFormat = ConfigManager.messages.CHANNEL_DEFAULT_SERVER;
-				chan.localForamt = ConfigManager.messages.CHANNEL_DEFAULT_LOCAL;
-				chan.forceChannel = false;
-				chan.forcedChannel = ConfigManager.chat.defaultChannel;
-				chan.localDistance = 50;
-				chan.connectionMessages = true;
 				ConfigManager.channels.Servers.put(serverName, chan);
 			}
 			loadChannel(server, serverName, chan.serverFormat, true, true);

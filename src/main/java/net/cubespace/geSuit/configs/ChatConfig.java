@@ -19,6 +19,12 @@ public class ChatConfig extends Config {
 	public String globalChatRegex = "\\{(factions_.*?)\\}";
 	public String defaultChannel = "Global";
 
-	public HashMap<String, String> prefixes = new HashMap<>();
-	public HashMap<String, String> suffixes = new HashMap<>();
+	public HashMap<String, String> prefixes = new HashMap<String, String>()
+	{{
+			put("default", "");
+	}};
+	public HashMap<String, String> suffixes = new HashMap<String, String>()
+	{{
+			put("default", "");
+	}};
 }

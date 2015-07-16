@@ -26,7 +26,6 @@ public class geSuit extends Plugin {
 		registerListeners();
 		registerCommands();
 		GeoIPManager.initialize();
-		ChatManager.defaultPrefixes();
 		ChatManager.loadChannels();
 	}
 

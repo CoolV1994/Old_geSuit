@@ -2,6 +2,7 @@ package net.cubespace.geSuit.configs.SubConfig;
 
 import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.Config;
+import net.cubespace.geSuit.managers.ConfigManager;
 
 /**
  * Created by Vinnie on 6/28/2015.
@@ -13,18 +14,18 @@ public class ServerChannel extends Config {
 	public String shortName;
 
 	@Comment("Format for server channel")
-	public String serverFormat;
+	public String serverFormat = ConfigManager.messages.CHANNEL_DEFAULT_SERVER;
 	@Comment("Format for local channel")
-	public String localForamt;
+	public String localForamt = ConfigManager.messages.CHANNEL_DEFAULT_LOCAL;
 
 	@Comment("Force chat channel?")
-	public boolean forceChannel;
+	public boolean forceChannel = false;
 	@Comment("Channel to force")
-	public String forcedChannel;
+	public String forcedChannel = "Global";
 	@Comment("Radius for local chat")
-	public int localDistance;
+	public int localDistance = 50;
 	@Comment("Display login/logout messages")
-	public boolean connectionMessages;
+	public boolean connectionMessages = true;
 
 	public boolean usingFactionChannels;
 	public boolean usingTowny;

@@ -7,6 +7,7 @@ import net.cubespace.geSuit.configs.*;
  * @author geNAZt (fabian.fassbender42@googlemail.com)
  */
 public class ConfigManager {
+	public static Messages messages = new Messages();
 	public static Announcements announcements = new Announcements();
 	public static BansConfig bans = new BansConfig();
 	public static Channels channels = new Channels();
@@ -14,7 +15,6 @@ public class ConfigManager {
 	public static MainConfig main = new MainConfig();
 	public static SpawnConfig spawn = new SpawnConfig();
 	public static TeleportConfig teleport = new TeleportConfig();
-	public static Messages messages = new Messages();
 	public static MOTDFile motd = new MOTDFile("motd.txt");
 	public static MOTDFile motdNew = new MOTDFile("motd-new.txt");
 
