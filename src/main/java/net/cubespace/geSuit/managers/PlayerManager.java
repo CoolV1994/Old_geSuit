@@ -312,28 +312,36 @@ public class PlayerManager {
 		if (match != null)
 			return match;
 
+		// All LowerCase matching
+		player = player.toLowerCase();
+
 		// Try fuzzy match (including display name)
 		GSPlayer fuzzymatch = null;
 		for (GSPlayer p : onlinePlayers.values()) {
-			ProxiedPlayer pp = p.getProxiedPlayer();
+			String nickname = "";
+			if (p.getNickname() != null) {
+				nickname = ChatColor.stripColor(p.getNickname().toLowerCase());
+			}
+
 			// Match exact display name (full match)
-			if ((pp != null) && (pp.getDisplayName() != null) && pp.getDisplayName().equalsIgnoreCase(player))
+			if ((!nickname.isEmpty()) && nickname.equalsIgnoreCase(player))
 				return p;
 
 			// Match exact UUID if one was given
-			if ((p.getUuid() != null) && (p.getUuid().equals(player)))
-				return p;
+			// LOL
+			//if ((p.getUuid() != null) && (p.getUuid().equals(player)))
+				//return p;
 
 			// Remember this "beginning" match in case we don't find a full match
 			// (it's important to check displayname + name, incase their name was changed during this session)
 			if ((p.getName().toLowerCase().startsWith(player)) ||
-					((pp != null) && (pp.getDisplayName() != null) && (pp.getDisplayName().toLowerCase().startsWith(player))))
+					((!nickname.isEmpty()) && (nickname.startsWith(player))))
 				match = p;
 
 			// Remember this "fuzzy" match in case we don't find a full match or a "beginning" match)
 			// (it's important to check displayname + name, incase their name was changed during this session)
 			if ((p.getName().toLowerCase().contains(player)) ||
-					((pp != null) && (pp.getDisplayName() != null) && (pp.getDisplayName().toLowerCase().contains(player))))
+					((!nickname.isEmpty()) && (nickname.contains(player))))
 				fuzzymatch = p;
 		}
 

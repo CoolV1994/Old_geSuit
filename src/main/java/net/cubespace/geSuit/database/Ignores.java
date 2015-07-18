@@ -80,8 +80,8 @@ public class Ignores implements IRepository {
 	@Override
 	public void registerPreparedStatements(ConnectionHandler connection) {
 		connection.addPreparedStatement("getIgnores", "SELECT ignoring FROM " + ConfigManager.main.Table_Ignores + " WHERE player = ?");
-		connection.addPreparedStatement("addIgnore", "INSERT INTO " + ConfigManager.main.Table_Warps + " (player, ignoring) VALUES (?, ?)");
-		connection.addPreparedStatement("removeIgnore", "DELETE FROM " + ConfigManager.main.Table_Warps + " WHERE player = ? AND ignoring = ?");
+		connection.addPreparedStatement("addIgnore", "INSERT INTO " + ConfigManager.main.Table_Ignores + " (player, ignoring) VALUES (?, ?)");
+		connection.addPreparedStatement("removeIgnore", "DELETE FROM " + ConfigManager.main.Table_Ignores + " WHERE player = ? AND ignoring = ?");
 	}
 
 	@Override

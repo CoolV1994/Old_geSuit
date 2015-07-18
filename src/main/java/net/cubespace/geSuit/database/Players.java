@@ -419,8 +419,8 @@ public class Players implements IRepository {
 
 		try {
 			PreparedStatement statement = connectionHandler.getPreparedStatement("setPlayerChannel");
-			statement.setString(1, uuid);
-			statement.setString(2, channel);
+			statement.setString(1, channel);
+			statement.setString(2, uuid);
 
 			statement.executeUpdate();
 		} catch (Exception e) {
@@ -468,8 +468,8 @@ public class Players implements IRepository {
 
 		try {
 			PreparedStatement statement = connectionHandler.getPreparedStatement("setPlayerNickname");
-			statement.setString(1, uuid);
-			statement.setString(2, nickname);
+			statement.setString(1, nickname);
+			statement.setString(2, uuid);
 
 			statement.executeUpdate();
 		} catch (Exception e) {
@@ -501,8 +501,8 @@ public class Players implements IRepository {
 
 		try {
 			PreparedStatement statement = connectionHandler.getPreparedStatement("mutePlayer");
-			statement.setString(1, uuid);
-			statement.setBoolean(2, muted);
+			statement.setBoolean(1, muted);
+			statement.setString(2, uuid);
 
 			statement.executeUpdate();
 		} catch (Exception e) {
