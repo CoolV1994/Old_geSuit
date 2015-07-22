@@ -47,13 +47,6 @@ public class TeleportsMessageListener implements Listener {
 		if (task.equals("TeleportToLocation")) {
 			GSPlayer player = PlayerManager.getPlayer(in.readUTF(), true);
 			String server = in.readUTF();
-			TeleportToLocation.execute(player, new Location((!server.equals("")) ? server : ((Server) event.getSender()).getInfo().getName(), in.readUTF(), in.readDouble(), in.readDouble(), in.readDouble()));
-			return;
-		}
-
-		if (task.equals("TeleportToPosition")) {
-			GSPlayer player = PlayerManager.getPlayer(in.readUTF(), true);
-			String server = in.readUTF();
 			TeleportToLocation.execute(player, new Location((!server.equals("")) ? server : ((Server) event.getSender()).getInfo().getName(), in.readUTF(), in.readDouble(), in.readDouble(), in.readDouble(), in.readFloat(), in.readFloat()));
 			return;
 		}
