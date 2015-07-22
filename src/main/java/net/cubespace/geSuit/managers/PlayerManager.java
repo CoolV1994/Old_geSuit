@@ -450,6 +450,7 @@ public class PlayerManager {
 	}
 
 	private static void sendServerMessage(ServerInfo server, String message) {
+		message = Utilities.colorize(message);
 		for (ProxiedPlayer p : server.getPlayers()) {
 			for (String line : message.split("\n")) {
 				p.sendMessage(line);
