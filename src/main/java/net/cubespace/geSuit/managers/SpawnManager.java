@@ -39,6 +39,30 @@ public class SpawnManager {
 		TeleportToLocation.execute(player, ProxySpawn);
 	}
 
+	public static void sendPlayerToThisSpawn(GSPlayer player, String spawn) {
+		spawn = spawn.toLowerCase();
+		if (spawn.equals("g")) {
+			sendPlayerToProxySpawn(player);
+			return;
+		}
+		if (!spawn.contains(":")) {
+			PlayerManager.sendMessageToTarget(player, "Invalid spawn specified");
+			return;
+		}
+		String[] args = spawn.split(":");
+		Location destination = null;
+		if (args[0].equals("s")) {
+			destination = DatabaseManager.spawns.getServerSpawn(args[1]);
+		}
+		if (args[0].equals("w")) {
+			destination = DatabaseManager.spawns.getSpawn(args[1]);
+		}
+		if (destination == null) {
+			PlayerManager.sendMessageToTarget(player, ConfigManager.messages.SPAWN_DOES_NOT_EXIST);
+			return;
+		}
+		TeleportToLocation.execute(player, destination);
+	}
 
 	public static void sendPlayerToNewPlayerSpawn(GSPlayer player) {
 		if (!doesNewPlayerSpawnExist()) {

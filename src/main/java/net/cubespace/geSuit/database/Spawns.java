@@ -59,6 +59,28 @@ public class Spawns implements IRepository {
 		return spawns;
 	}
 
+	public Location getServerSpawn(String server) {
+		ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
+		Location location = null;
+
+		try {
+			PreparedStatement getSpawn = connectionHandler.getPreparedStatement("getServerSpawn");
+			getSpawn.setString(1, server);
+
+			ResultSet res = getSpawn.executeQuery();
+			while (res.next()) {
+				location = new Location(res.getString("server"), res.getString("world"), res.getDouble("x"), res.getDouble("y"), res.getDouble("z"), res.getFloat("yaw"), res.getFloat("pitch"));
+			}
+			res.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			connectionHandler.release();
+		}
+
+		return location;
+	}
+
 	public void insertSpawn(Spawn spawn) {
 		ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
 
@@ -119,6 +141,7 @@ public class Spawns implements IRepository {
 	@Override
 	public void registerPreparedStatements(ConnectionHandler connection) {
 		connection.addPreparedStatement("getSpawn", "SELECT * FROM " + ConfigManager.main.Table_Spawns + " WHERE spawnname=?");
+		connection.addPreparedStatement("getServerSpawn", "SELECT * FROM " + ConfigManager.main.Table_Spawns + " WHERE spawnname='server' AND server=?");
 		connection.addPreparedStatement("getSpawnsForServer", "SELECT * FROM " + ConfigManager.main.Table_Spawns + " WHERE server=? AND NOT (spawnname = 'NewPlayerSpawn' OR spawnname = 'ProxySpawn')");
 		connection.addPreparedStatement("insertSpawn", "INSERT INTO " + ConfigManager.main.Table_Spawns + " (spawnname, server, world, x, y, z, yaw, pitch) VALUES(?,?,?,?,?,?,?,?)");
 		connection.addPreparedStatement("updateSpawn", "UPDATE " + ConfigManager.main.Table_Spawns + " SET world = ?, x = ?, y = ?, z = ?, yaw = ?, pitch = ? WHERE spawnname = ? AND server = ?");

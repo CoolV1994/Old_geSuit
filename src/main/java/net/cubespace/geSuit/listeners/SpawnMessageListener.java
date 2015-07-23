@@ -45,6 +45,8 @@ public class SpawnMessageListener implements Listener {
 			SpawnManager.sendPlayerToProxySpawn(PlayerManager.getPlayer(in.readUTF(), true));
 		} else if (task.equals("GetSpawns")) {
 			SpawnManager.sendSpawns(s);
+		} else if (task.equals("SendToThisSpawn")) {
+			SpawnManager.sendPlayerToThisSpawn(PlayerManager.getPlayer(in.readUTF(), true), in.readUTF());
 		} else if (task.equals("SetServerSpawn")) {
 			SpawnManager.setServerSpawn(PlayerManager.getPlayer(in.readUTF(), true), new Location(s.getInfo().getName(), in.readUTF(), in.readDouble(), in.readDouble(), in.readDouble(), in.readFloat(), in.readFloat()), in.readBoolean());
 		} else if (task.equals("SetWorldSpawn")) {
