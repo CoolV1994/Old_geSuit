@@ -30,8 +30,10 @@ public class MainConfig extends Config {
 	public String Table_Tracking = "tracking";
 	@Comment("This can be used if you have multiple Proxies to seperate the Ontime in it")
 	public String Table_OnTime = "ontime";
-	@Comment("This can be used if you have multiple Proxies to seperate the Ontime in it")
+	@Comment("This can be used if you have multiple Proxies to seperate the Ignores in it")
 	public String Table_Ignores = "ignores";
+	@Comment("This can be used if you have multiple Proxies to seperate the Mail in it")
+	public String Table_Mail = "mail";
 
     /*public Boolean ConvertFromBungeeSuite = false;
 	public Database BungeeSuiteDatabase = new Database();*/

@@ -82,6 +82,21 @@ public class ChatMessageListener implements Listener {
 			PlayerManager.sendPrivateMessageToPlayer(p, in.readUTF(), in.readUTF());
 			return;
 		}
+		if (task.equals("SendMail")) {
+			GSPlayer p = PlayerManager.getPlayer(in.readUTF());
+			MailManager.sendMessage(p, in.readUTF(), in.readUTF());
+			return;
+		}
+		if (task.equals("ReadMail")) {
+			GSPlayer p = PlayerManager.getPlayer(in.readUTF());
+			MailManager.getMail(p, in.readInt());
+			return;
+		}
+		if (task.equals("ClearMail")) {
+			GSPlayer p = PlayerManager.getPlayer(in.readUTF());
+			MailManager.clearInbox(p);
+			return;
+		}
 		if (task.equals("SetChatSpy")) {
 			ChatManager.setChatSpy(in.readUTF());
 			return;

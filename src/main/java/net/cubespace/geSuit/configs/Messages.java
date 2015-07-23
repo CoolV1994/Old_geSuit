@@ -190,4 +190,8 @@ public class Messages extends Config {
 	public String AFK_DISPLAY = "&5" + "[AFK]&r";
 	public String PLAYER_AFK = "&6" + "{player} &6is now afk";
 	public String PLAYER_NOT_AFK = "&7" + "{player} &7is no longer afk";
+	public String PLAYER_MAIL_SENT = "&6" + "Message has been sent to &f{player}";
+	public String PLAYER_INBOX_EMPTY = "&6" + "You do not have any mail.";
+	public String PLAYER_INBOX_CLEARED = "&6" + "Mail cleared!";
+	public String MAIL_FORMAT = "&6" + "[" + "&f" + "{sender}" + "&6" + "]" + "&f" + " " + "{message}";
 }

@@ -16,6 +16,7 @@ public class DatabaseManager {
 	public static Warps warps;
 	public static Tracking tracking;
 	public static OnTime ontime;
+	public static Mail mail;
 
 	static {
 		players = new Players();
@@ -27,6 +28,7 @@ public class DatabaseManager {
 		warps = new Warps();
 		tracking = new Tracking();
 		ontime = new OnTime();
+		mail = new Mail();
 
 		connectionPool = new ConnectionPool();
 		connectionPool.addRepository(players);
@@ -38,6 +40,7 @@ public class DatabaseManager {
 		connectionPool.addRepository(warps);
 		connectionPool.addRepository(tracking);
 		connectionPool.addRepository(ontime);
+		connectionPool.addRepository(mail);
 		connectionPool.initialiseConnections(ConfigManager.main.Database);
 
 		AnnouncementManager.loadAnnouncements();
