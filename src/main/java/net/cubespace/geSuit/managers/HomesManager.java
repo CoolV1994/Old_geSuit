@@ -184,6 +184,9 @@ public class HomesManager {
 		TeleportToLocation.execute(player, h.loc);
 
 		PlayerManager.sendMessageToTarget(player, ConfigManager.messages.SENT_HOME.replace("{home}", home));
+
+		// Inform player of new mail
+		MailManager.informPlayerOfInbox(player, false);
 	}
 
 	public static void sendPlayerToOtherHome(GSPlayer sender, String playername, String home) {

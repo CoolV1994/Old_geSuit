@@ -193,5 +193,7 @@ public class Messages extends Config {
 	public String PLAYER_MAIL_SENT = "&6" + "Message has been sent to &f{player}";
 	public String PLAYER_INBOX_EMPTY = "&6" + "You do not have any mail.";
 	public String PLAYER_INBOX_CLEARED = "&6" + "Mail cleared!";
-	public String MAIL_FORMAT = "&6" + "[" + "&f" + "{sender}" + "&6" + "]" + "&f" + " " + "{message}";
+	public String PLAYER_INBOX_UNREAD = "&6" + "You have " + "&c{messages}" + "&6 messages! Type " + "&c/mail read " + "&6 to view your mail.";
+	public String PLAYER_NO_NEW_MAIL = "&6" + "You have no new mail";
+	public String MAIL_FORMAT = "&6[" + "&f{sender}" + "&6]" + "&f {message}";
 }

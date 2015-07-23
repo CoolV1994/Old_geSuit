@@ -122,6 +122,10 @@ public class PlayerListener implements Listener {
 
 					// Update player tracking information
 					PlayerManager.updateTracking(p);
+
+					// Inform player of new mail
+					boolean notify = ConfigManager.chat.notifyNoNewMail;
+					MailManager.informPlayerOfInbox(p, notify);
 				}
 			}, 100, TimeUnit.MILLISECONDS);
 		}

@@ -18,6 +18,7 @@ public class ChatConfig extends Config {
 	public boolean updateNicknamesOnTab = true;
 	public String globalChatRegex = "\\{(factions_.*?)\\}";
 	public String defaultChannel = "Global";
+	public boolean notifyNoNewMail = true;
 
 	public HashMap<String, String> prefixes = new HashMap<String, String>()
 	{{

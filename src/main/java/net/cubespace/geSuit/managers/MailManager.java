@@ -10,6 +10,16 @@ import java.util.List;
  * Created by Vinnie on 7/23/2015.
  */
 public class MailManager {
+	public static void informPlayerOfInbox(GSPlayer p, boolean tellEmpty) {
+		int messages = DatabaseManager.mail.getInboxCount(p.getUuid());
+		if (messages == 0) {
+			if (tellEmpty)
+				p.sendMessage(ConfigManager.messages.PLAYER_NO_NEW_MAIL);
+			return;
+		}
+		p.sendMessage(ConfigManager.messages.PLAYER_INBOX_UNREAD.replace("{messages}", String.valueOf(messages)));
+	}
+
 	public static void sendMessage(GSPlayer p, String receiver, String message) throws SQLException {
 		GSPlayer target = PlayerManager.matchOnlinePlayer(receiver);
 		String targetUUID;
@@ -24,7 +34,7 @@ public class MailManager {
 		} else {
 			p.sendMessage(ConfigManager.messages.PLAYER_DOES_NOT_EXIST);
 		}
-		// TODO: Add social spy
+		PlayerManager.sendPrivateMessageToSpies(p, target, message);
 	}
 
 	public static void getMail(GSPlayer p, int page) throws SQLException {

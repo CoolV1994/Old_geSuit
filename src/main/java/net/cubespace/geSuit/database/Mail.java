@@ -12,6 +12,28 @@ import java.util.List;
  * Created by Vinnie on 6/28/2015.
  */
 public class Mail implements IRepository {
+	public int getInboxCount(String player) {
+		ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
+		int messages = 0;
+
+		try {
+			PreparedStatement getCount = connectionHandler.getPreparedStatement("getInboxCount");
+			getCount.setString(1, player);
+
+			ResultSet res = getCount.executeQuery();
+			while (res.next()) {
+				messages = res.getInt("count");
+			}
+			res.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			connectionHandler.release();
+		}
+
+		return messages;
+	}
+
 	public List<String> getMail(String player, int start) {
 		ConnectionHandler connectionHandler = DatabaseManager.connectionPool.getConnection();
 		List<String> mail = new ArrayList<>();
@@ -93,6 +115,7 @@ public class Mail implements IRepository {
 				" LIMIT ?, 9;");
 		connection.addPreparedStatement("addMessage", "INSERT INTO " + ConfigManager.main.Table_Mail + " (time, sender, receiver, message) VALUES (NOW(), ?, ?, ?)");
 		connection.addPreparedStatement("clearInbox", "DELETE FROM " + ConfigManager.main.Table_Mail + " WHERE receiver = ?");
+		connection.addPreparedStatement("getInboxCount", "SELECT COUNT(receiver) AS count FROM " + ConfigManager.main.Table_Mail + " WHERE receiver = ?");
 	}
 
 	@Override
