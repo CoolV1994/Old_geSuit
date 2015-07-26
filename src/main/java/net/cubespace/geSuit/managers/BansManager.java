@@ -751,4 +751,8 @@ public class BansManager {
 		}
 		return target;
 	}
+
+	public static void displayLastSeenInfo(String sender, String target, boolean extra, boolean vanish) {
+		PlayerManager.sendMessageToTarget(sender, PlayerManager.getLastSeeninfos(target, extra, vanish));
+	}
 }

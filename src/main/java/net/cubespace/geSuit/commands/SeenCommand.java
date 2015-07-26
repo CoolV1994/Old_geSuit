@@ -20,7 +20,6 @@ public class SeenCommand extends Command {
 	public void execute(CommandSender sender, String[] args) {
 		if (!(sender.hasPermission("gesuit.seen") || sender.hasPermission("gesuit.admin"))) {
 			PlayerManager.sendMessageToTarget(sender, ConfigManager.messages.NO_PERMISSION);
-
 			return;
 		}
 

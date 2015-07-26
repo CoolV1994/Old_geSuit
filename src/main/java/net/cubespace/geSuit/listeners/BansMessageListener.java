@@ -67,6 +67,10 @@ public class BansMessageListener implements Listener {
 			BansManager.banIP(in.readUTF(), in.readUTF(), in.readUTF());
 			return;
 		}
+		if (task.equals("SeenPlayer")) {
+			BansManager.displayLastSeenInfo(in.readUTF(), in.readUTF(), in.readBoolean(), in.readBoolean());
+			return;
+		}
 		if (task.equals("CheckPlayerBans")) {
 			BansManager.checkPlayersBan(in.readUTF(), in.readUTF());
 			return;
