@@ -51,6 +51,10 @@ public class SpawnManager {
 		}
 		String[] args = spawn.split(":");
 		Location destination = null;
+		if (args.length != 2) {
+			PlayerManager.sendMessageToTarget(player, "Invalid spawn specified");
+			return;
+		}
 		if (args[0].equals("s")) {
 			destination = DatabaseManager.spawns.getServerSpawn(args[1]);
 		}

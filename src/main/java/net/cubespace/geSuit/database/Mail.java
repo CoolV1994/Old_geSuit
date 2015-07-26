@@ -109,7 +109,7 @@ public class Mail implements IRepository {
 				"SELECT " + ConfigManager.main.Table_Mail + ".message, " + ConfigManager.main.Table_Players + ".playername" +
 				" FROM " + ConfigManager.main.Table_Mail +
 				" LEFT JOIN " + ConfigManager.main.Table_Players +
-				" ON " + ConfigManager.main.Table_Mail + ".receiver=" + ConfigManager.main.Table_Players + ".uuid" +
+				" ON " + ConfigManager.main.Table_Mail + ".sender=" + ConfigManager.main.Table_Players + ".uuid" +
 				" WHERE receiver = ? " +
 				" ORDER BY " + ConfigManager.main.Table_Mail + ".time DESC" +
 				" LIMIT ?, 9;");
